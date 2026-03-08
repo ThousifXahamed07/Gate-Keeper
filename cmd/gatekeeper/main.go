@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/ThousifXahamed079/gatekeeper/internal/cli"
+	"github.com/ThousifXahamed079/gatekeeper/internal/docs"
 	"github.com/ThousifXahamed079/gatekeeper/internal/envloader"
 	"github.com/ThousifXahamed079/gatekeeper/internal/schema"
 	"github.com/ThousifXahamed079/gatekeeper/internal/validator"
@@ -24,6 +25,8 @@ func main() {
 	switch os.Args[1] {
 	case "check":
 		os.Exit(runCheck(os.Args[2:]))
+	case "docs":
+		os.Exit(runDocs(os.Args[2:]))
 	case "version":
 		fmt.Println("gatekeeper " + version)
 		os.Exit(cli.ExitSuccess)
@@ -45,10 +48,11 @@ func printUsage() {
 	fmt.Println("")
 	fmt.Println("Commands:")
 	fmt.Println("  check     Validate environment variables against schema")
+	fmt.Println("  docs      Generate documentation from schema")
 	fmt.Println("  version   Print version information")
 	fmt.Println("  help      Show this help message")
 	fmt.Println("")
-	fmt.Println("Run 'gatekeeper check --help' for check command options.")
+	fmt.Println("Run 'gatekeeper <command> --help' for command-specific options.")
 }
 
 func runCheck(args []string) int {
@@ -149,6 +153,87 @@ func runCheck(args []string) int {
 	}
 	
 	printSummarySuccess(total)
+	return cli.ExitSuccess
+}
+
+func runDocs(args []string) int {
+	fs := flag.NewFlagSet("docs", flag.ExitOnError)
+
+	schemaPath := fs.String("schema", "", "Path to schema file (default: auto-detect)")
+	format := fs.String("format", "markdown", "Output format: markdown, env-example")
+	outPath := fs.String("out", "", "Output file path (default: stdout)")
+
+	fs.Usage = func() {
+		fmt.Println("Usage: gatekeeper docs [options]")
+		fmt.Println("")
+		fmt.Println("Generate documentation from the schema.")
+		fmt.Println("")
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+	}
+
+	if err := fs.Parse(args); err != nil {
+		return cli.ExitValidation
+	}
+
+	// Validate format
+	if *format != "markdown" && *format != "env-example" {
+		fmt.Fprintf(os.Stderr, "Error: invalid format %q, must be one of: markdown, env-example\n", *format)
+		return cli.ExitValidation
+	}
+
+	// Load schema
+	var schemaFile string
+	var err error
+
+	if *schemaPath != "" {
+		schemaFile = *schemaPath
+	} else {
+		schemaFile, err = schema.FindSchemaFile()
+		if err != nil {
+			printSchemaError(err.Error())
+			return cli.ExitSchemaError
+		}
+	}
+
+	s, err := schema.ParseFile(schemaFile)
+	if err != nil {
+		printSchemaError(err.Error())
+		return cli.ExitSchemaError
+	}
+
+	// Determine output destination
+	var output *os.File
+	if *outPath != "" {
+		output, err = os.Create(*outPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: cannot create output file: %s\n", err.Error())
+			return cli.ExitValidation
+		}
+		defer output.Close()
+	} else {
+		output = os.Stdout
+	}
+
+	// Generate documentation
+	switch *format {
+	case "markdown":
+		if err := docs.GenerateMarkdown(s, output); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+			return cli.ExitValidation
+		}
+	case "env-example":
+		if err := docs.GenerateEnvExample(s, output); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+			return cli.ExitValidation
+		}
+	}
+
+	// Print success message to stderr if writing to file
+	if *outPath != "" {
+		fmt.Fprintf(os.Stderr, "✅ Documentation written to %s\n", *outPath)
+	}
+
 	return cli.ExitSuccess
 }
 

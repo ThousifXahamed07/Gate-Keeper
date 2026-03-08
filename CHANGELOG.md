@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Documentation Generator** (`gatekeeper docs`)
+  - Generate markdown documentation from schema
+  - Generate `.env.example` files from schema
+  - Group-based organization with table output
+  - Sensitive variable indicators (🔒)
+  - Enum value display with ellipsis for long lists
+  - Write to file or stdout
+
 ## [0.1.0] - 2025-01-XX
 
 ### Added
