@@ -1,0 +1,121 @@
+# Example Gatekeeper Schema
+# This file demonstrates all supported validation features
+
+version: "1.0"
+
+groups:
+  # Application settings
+  - name: Application
+    description: Core application configuration
+    vars:
+      - name: APP_NAME
+        type: string
+        required: true
+        description: Application name
+        
+      - name: APP_ENV
+        type: enum
+        required: true
+        allowed_values: ["development", "staging", "production"]
+        description: Application environment
+        
+      - name: DEBUG
+        type: boolean
+        required: false
+        default: "false"
+        description: Enable debug mode
+
+  # Server configuration
+  - name: Server
+    description: HTTP server settings
+    vars:
+      - name: PORT
+        type: port
+        required: true
+        description: Server port number
+        
+      - name: HOST
+        type: string
+        required: false
+        default: "0.0.0.0"
+        description: Server host address
+        
+      - name: READ_TIMEOUT
+        type: duration
+        required: false
+        default: "30s"
+        description: HTTP read timeout
+
+  # Database configuration
+  - name: Database
+    description: Database connection settings
+    vars:
+      - name: DATABASE_URL
+        type: url
+        required: true
+        sensitive: true
+        description: Database connection URL
+        
+      - name: DB_MAX_CONNECTIONS
+        type: integer
+        required: false
+        default: "10"
+        description: Maximum database connections
+        
+      - name: DB_TIMEOUT
+        type: duration
+        required: false
+        default: "5s"
+        description: Database query timeout
+
+  # External services
+  - name: Services
+    description: External service configuration
+    vars:
+      - name: API_KEY
+        type: string
+        required: true
+        sensitive: true
+        pattern: "^[A-Za-z0-9]{32,64}$"
+        description: API key for external service
+        
+      - name: WEBHOOK_URL
+        type: url
+        required: false
+        description: Webhook endpoint URL
+        
+      - name: ADMIN_EMAIL
+        type: email
+        required: true
+        description: Administrator email address
+
+  # File paths
+  - name: Storage
+    description: File storage configuration
+    vars:
+      - name: LOG_DIR
+        type: filepath
+        required: false
+        default: "/var/log/app"
+        description: Log directory path
+        
+      - name: UPLOAD_DIR
+        type: filepath
+        required: true
+        description: File upload directory
+
+  # Feature flags
+  - name: Features
+    description: Feature flags and limits
+    vars:
+      - name: MAX_UPLOAD_SIZE
+        type: float
+        required: false
+        default: "10.5"
+        description: Maximum upload size in MB
+        
+      - name: RATE_LIMIT
+        type: integer
+        required: false
+        default: "100"
+        description: API rate limit per minute

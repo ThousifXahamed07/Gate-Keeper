@@ -1,8 +1,11 @@
 .DEFAULT_GOAL := all
 
-.PHONY: all build test lint clean install
+.PHONY: all build test lint clean install check-deps
 
 all: lint test build
+
+check-deps:
+	bash scripts/check-deps.sh
 
 build:
 	go build -o bin/gatekeeper ./cmd/gatekeeper
