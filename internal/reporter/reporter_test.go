@@ -385,7 +385,9 @@ func TestJSONReporter_EmptyResults_NotNull(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	output := buf.String()
 	// Should have "results": [] not "results": null
@@ -407,10 +409,14 @@ func TestJSONReporter_StatusStrings(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	var output jsonOutput
-	json.Unmarshal(buf.Bytes(), &output)
+	if err := json.Unmarshal(buf.Bytes(), &output); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
 
 	expected := []string{"pass", "fail", "warn"}
 	for i, exp := range expected {
@@ -428,7 +434,9 @@ func TestJSONReporter_NoTextOutsideJSON(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	output := strings.TrimSpace(buf.String())
 	if !strings.HasPrefix(output, "{") {
@@ -486,7 +494,9 @@ func TestGitHubReporter_AllPass(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &GitHubReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	output := buf.String()
 
@@ -509,7 +519,9 @@ func TestGitHubReporter_AnnotationFormat(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &GitHubReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	output := buf.String()
 	if !strings.Contains(output, "::error title=Gatekeeper::MY_VAR: is missing") {
@@ -525,7 +537,9 @@ func TestGitHubReporter_EscapeNewline(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &GitHubReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	output := buf.String()
 	if !strings.Contains(output, "%0A") {
@@ -544,7 +558,9 @@ func TestGitHubReporter_SummaryIsLast(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &GitHubReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	lines := strings.Split(strings.TrimSpace(buf.String()), "\n")
 	lastLine := lines[len(lines)-1]
