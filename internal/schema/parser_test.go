@@ -167,8 +167,10 @@ vars:
 func TestFindSchemaFile_Primary(t *testing.T) {
 	dir := t.TempDir()
 	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir)
-	os.Chdir(dir)
+	defer func() { _ = os.Chdir(origDir) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("failed to chdir: %v", err)
+	}
 
 	if err := os.WriteFile(".gatekeeper.yaml", []byte("version: \"1\"\nvars: []"), 0644); err != nil {
 		t.Fatalf("failed to write test file: %v", err)
@@ -186,8 +188,10 @@ func TestFindSchemaFile_Primary(t *testing.T) {
 func TestFindSchemaFile_Fallback(t *testing.T) {
 	dir := t.TempDir()
 	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir)
-	os.Chdir(dir)
+	defer func() { _ = os.Chdir(origDir) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("failed to chdir: %v", err)
+	}
 
 	if err := os.WriteFile(".gatekeeper.yml", []byte("version: \"1\"\nvars: []"), 0644); err != nil {
 		t.Fatalf("failed to write test file: %v", err)
@@ -205,8 +209,10 @@ func TestFindSchemaFile_Fallback(t *testing.T) {
 func TestFindSchemaFile_NoFile(t *testing.T) {
 	dir := t.TempDir()
 	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir)
-	os.Chdir(dir)
+	defer func() { _ = os.Chdir(origDir) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("failed to chdir: %v", err)
+	}
 
 	_, err := FindSchemaFile()
 	if err == nil {

@@ -57,7 +57,7 @@ func printUsage() {
 
 func runCheck(args []string) int {
 	fs := flag.NewFlagSet("check", flag.ExitOnError)
-	
+
 	schemaPath := fs.String("schema", "", "Path to schema file (default: auto-detect)")
 	envFile := fs.String("env-file", ".env", "Path to .env file")
 	format := fs.String("format", "text", "Output format: text, json, github")
@@ -86,7 +86,7 @@ func runCheck(args []string) int {
 	// Load schema
 	var schemaFile string
 	var err error
-	
+
 	if *schemaPath != "" {
 		schemaFile = *schemaPath
 	} else {
@@ -108,7 +108,7 @@ func runCheck(args []string) int {
 	if !*noEnvFile {
 		envFilePath = *envFile
 	}
-	
+
 	envData, err := envloader.Load(envFilePath, *noEnvFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -151,7 +151,7 @@ func runCheck(args []string) int {
 		printSummaryFail(failed, warned, total)
 		return cli.ExitValidation
 	}
-	
+
 	printSummarySuccess(total)
 	return cli.ExitSuccess
 }

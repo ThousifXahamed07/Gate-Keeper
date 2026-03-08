@@ -306,7 +306,7 @@ func TestGenerateMarkdown(t *testing.T) {
 			name: "no ungrouped heading when no groups defined",
 			schema: &schema.Schema{
 				Version: "1",
-				Groups: []schema.Group{},
+				Groups:  []schema.Group{},
 				Vars: []schema.Var{
 					{Name: "VAR1", Type: "string"},
 				},

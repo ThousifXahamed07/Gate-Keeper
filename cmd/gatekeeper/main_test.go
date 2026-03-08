@@ -57,16 +57,6 @@ func createTestSchema(t *testing.T, content string) string {
 	return schemaPath
 }
 
-func createTestEnvFile(t *testing.T, content string) string {
-	t.Helper()
-	tmpDir := t.TempDir()
-	envPath := filepath.Join(tmpDir, ".env")
-	if err := os.WriteFile(envPath, []byte(content), 0644); err != nil {
-		t.Fatalf("failed to create .env: %v", err)
-	}
-	return envPath
-}
-
 // === Exit Code Tests ===
 
 func TestExitCode_Success_AllVarsPass(t *testing.T) {

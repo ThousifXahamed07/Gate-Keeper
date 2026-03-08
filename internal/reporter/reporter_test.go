@@ -321,10 +321,14 @@ func TestJSONReporter_AllPass_PassedTrue(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	var output jsonOutput
-	json.Unmarshal(buf.Bytes(), &output)
+	if err := json.Unmarshal(buf.Bytes(), &output); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
 
 	if !output.Passed {
 		t.Error("expected passed=true")
@@ -339,10 +343,14 @@ func TestJSONReporter_OneFail_PassedFalse(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	var output jsonOutput
-	json.Unmarshal(buf.Bytes(), &output)
+	if err := json.Unmarshal(buf.Bytes(), &output); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
 
 	if output.Passed {
 		t.Error("expected passed=false")
@@ -357,10 +365,14 @@ func TestJSONReporter_SensitiveRedacted(t *testing.T) {
 
 	var buf bytes.Buffer
 	reporter := &JSONReporter{}
-	reporter.Render(report, &buf)
+	if err := reporter.Render(report, &buf); err != nil {
+		t.Fatalf("Render() error = %v", err)
+	}
 
 	var output jsonOutput
-	json.Unmarshal(buf.Bytes(), &output)
+	if err := json.Unmarshal(buf.Bytes(), &output); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
 
 	if output.Results[0].Value != "***REDACTED***" {
 		t.Errorf("expected '***REDACTED***', got %q", output.Results[0].Value)
